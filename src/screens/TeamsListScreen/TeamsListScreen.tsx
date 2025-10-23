@@ -16,6 +16,7 @@ import { fetchTeamsList } from '../../app/actions';
 import { TeamListItemResponse } from '../../app/services';
 import { TeamCard } from './ui';
 import { resetTeams } from '../../app/slices';
+import { SCREEN_NAMES } from '../../config';
 
 interface TeamsListScreenProps
   extends NativeStackScreenProps<AppStackParamList, 'TeamsListScreen'> {}
@@ -33,8 +34,17 @@ export const TeamsListScreen: FC<TeamsListScreenProps> = ({ navigation }) => {
     dispatch(fetchTeamsList({ page: 1 }));
   };
 
+  const handleShiftPress = (teamName: string, teamId: number) => {
+    navigation.navigate(SCREEN_NAMES.TeamDetailsScreen, { teamName, teamId });
+  };
+
   const renderItem: ListRenderItem<TeamListItemResponse> = useCallback(
-    ({ item }) => <TeamCard team={item} onPress={() => {}} />,
+    ({ item }) => (
+      <TeamCard
+        team={item}
+        onPress={() => handleShiftPress(item.name, item.id)}
+      />
+    ),
     [],
   );
 

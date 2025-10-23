@@ -4,11 +4,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AppStackParamList } from '../../app/navigation/types';
 
-interface ShiftDetailsScreenProps
-  extends NativeStackScreenProps<AppStackParamList, 'ShiftDetailsScreen'> {}
+interface TeamDetailsScreenProps
+  extends NativeStackScreenProps<AppStackParamList, 'TeamDetailsScreen'> {}
 
-export const ShiftDetailsScreen: FC<ShiftDetailsScreenProps> = ({ route }) => {
-  const { shiftId } = route.params;
+export const TeamDetailsScreen: FC<TeamDetailsScreenProps> = ({ route }) => {
+  const { teamId } = route.params;
 
   return <ScrollView style={styles.container}></ScrollView>;
 };

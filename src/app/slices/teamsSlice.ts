@@ -1,14 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchTeamsList } from '../actions';
-
-interface TeamItem {
-  id: number;
-  name: string;
-  crest: string;
-}
+import { TeamListItemResponse } from '../services';
 
 interface TeamsState {
-  teams: TeamItem[];
+  teams: TeamListItemResponse[];
   loading: boolean;
   error: string | null;
   page: number;

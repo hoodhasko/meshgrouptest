@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { TeamListResponse, TeamService } from '../services';
+import { TeamDataResponse, TeamListResponse, TeamService } from '../services';
 
 export const fetchTeamsList = createAsyncThunk<
   { data: TeamListResponse; page: number },
@@ -16,6 +16,24 @@ export const fetchTeamsList = createAsyncThunk<
       err.response?.data?.message ||
       err.message ||
       'Ошибка при загрузке матчей';
+    return rejectWithValue(String(message));
+  }
+});
+
+export const fetchTeamData = createAsyncThunk<
+  TeamDataResponse,
+  { teamId: number },
+  { rejectValue: string }
+>('teams', async ({ teamId }, { rejectWithValue }) => {
+  try {
+    const response = await TeamService.fetchTeam(teamId);
+
+    return response.data;
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.message ||
+      'Ошибка при загрузке команды';
     return rejectWithValue(String(message));
   }
 });

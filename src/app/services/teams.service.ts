@@ -15,6 +15,25 @@ export interface TeamListResponse {
   teams: TeamListItemResponse[];
 }
 
+export interface TeamDataResponse {
+  area: {
+    id: number;
+    name: string;
+    code: string;
+    flag: string;
+  };
+  id: number;
+  name: string;
+  shortName: string;
+  tla: string;
+  crest: string;
+  address: string;
+  website: string;
+  founded: number;
+  clubColors: string;
+  venue: string;
+}
+
 export const TeamService = {
   async fetchTeamsList(limit: number, offset: number) {
     return await apiClient.get<TeamListResponse>('teams', {
@@ -23,5 +42,8 @@ export const TeamService = {
         offset,
       },
     });
+  },
+  async fetchTeam(teamId: number) {
+    return await apiClient.get<TeamDataResponse>(`teams/${teamId}`);
   },
 };
