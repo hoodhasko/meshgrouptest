@@ -12,7 +12,6 @@ interface TeamsState {
   loading: boolean;
   error: string | null;
   page: number;
-  total: number;
   limit: number;
 }
 
@@ -21,7 +20,6 @@ const initialState: TeamsState = {
   loading: false,
   error: null,
   page: 1,
-  total: 0,
   limit: 10,
 };
 
@@ -29,15 +27,9 @@ export const teamsSlice = createSlice({
   name: 'teams',
   initialState,
   reducers: {
-    setLightnings: (state, action: PayloadAction<TeamItem[]>) => {
-      state.teams = action.payload;
-    },
-    markLightningViewed: (state, action: PayloadAction<number>) => {
-      state.teams = state.teams.map(lightning =>
-        lightning.id === action.payload
-          ? { ...lightning, is_viewed: true }
-          : lightning,
-      );
+    resetTeams: state => {
+      state.teams = [];
+      state.page = 1;
     },
   },
   extraReducers: builder => {
@@ -49,15 +41,18 @@ export const teamsSlice = createSlice({
       .addCase(fetchTeamsList.fulfilled, (state, { payload }) => {
         state.loading = false;
 
-        const { count, filters, teams } = payload;
+        const {
+          data: { teams },
+          page,
+        } = payload;
 
-        if (filters.offset === 1) {
+        if (page === 1) {
           state.teams = teams;
         } else {
           state.teams = [...state.teams, ...teams];
         }
 
-        state.page = filters.offset;
+        state.page = page;
       })
       .addCase(fetchTeamsList.rejected, (state, action) => {
         state.loading = false;
@@ -66,4 +61,4 @@ export const teamsSlice = createSlice({
   },
 });
 
-export const { setLightnings, markLightningViewed } = teamsSlice.actions;
+export const { resetTeams } = teamsSlice.actions;

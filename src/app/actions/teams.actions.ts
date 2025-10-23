@@ -2,17 +2,15 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { TeamListResponse, TeamService } from '../services';
 
 export const fetchTeamsList = createAsyncThunk<
-  TeamListResponse,
-  { page?: number },
+  { data: TeamListResponse; page: number },
+  { limit?: number; page?: number },
   { rejectValue: string }
->('teams', async ({ page = 1 }, { rejectWithValue }) => {
-  console.log('first');
+>('teams', async ({ limit = 20, page = 1 }, { rejectWithValue }) => {
   try {
-    const response = await TeamService.fetchTeamsList();
+    const newOffset = (page - 1) * limit;
+    const response = await TeamService.fetchTeamsList(limit, newOffset);
 
-    console.log('response', response);
-
-    return response.data;
+    return { data: response.data, page };
   } catch (err: any) {
     const message =
       err.response?.data?.message ||

@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItem,
+  RefreshControl,
   StyleSheet,
   Text,
   View,
@@ -13,11 +14,13 @@ import { AppStackParamList } from '../../app/navigation/types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchTeamsList } from '../../app/actions';
 import { TeamListItemResponse } from '../../app/services';
+import { TeamCard } from './ui';
+import { resetTeams } from '../../app/slices';
 
-interface ShiftsListScreenProps
-  extends NativeStackScreenProps<AppStackParamList, 'ShiftsListScreen'> {}
+interface TeamsListScreenProps
+  extends NativeStackScreenProps<AppStackParamList, 'TeamsListScreen'> {}
 
-export const ShiftsListScreen: FC<ShiftsListScreenProps> = ({ navigation }) => {
+export const TeamsListScreen: FC<TeamsListScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { teams, loading, error, page } = useAppSelector(state => state.teams);
 
@@ -25,8 +28,13 @@ export const ShiftsListScreen: FC<ShiftsListScreenProps> = ({ navigation }) => {
     dispatch(fetchTeamsList({ page: 1 }));
   }, []);
 
+  const onRefresh = () => {
+    dispatch(resetTeams());
+    dispatch(fetchTeamsList({ page: 1 }));
+  };
+
   const renderItem: ListRenderItem<TeamListItemResponse> = useCallback(
-    ({ item }) => <Text>{item.name}</Text>,
+    ({ item }) => <TeamCard team={item} onPress={() => {}} />,
     [],
   );
 
@@ -37,21 +45,31 @@ export const ShiftsListScreen: FC<ShiftsListScreenProps> = ({ navigation }) => {
     );
   };
 
+  const loadMore = () => {
+    if (!loading && teams.length) {
+      dispatch(fetchTeamsList({ page: page + 1 }));
+    }
+  };
+
   return (
     <View style={styles.container}>
+      {error && <Text style={styles.error}>{error}</Text>}
+
       <FlatList
         data={teams}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text>Нет данных</Text>}
+        ListEmptyComponent={!loading && !error ? <Text>Нет данных</Text> : null}
         ListFooterComponent={renderFooter}
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={shiftStore.isLoading}
-        //     onRefresh={onRefresh}
-        //   />
-        // }
+        refreshControl={
+          <RefreshControl
+            refreshing={loading && page === 1}
+            onRefresh={onRefresh}
+          />
+        }
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.7}
       />
     </View>
   );
@@ -65,5 +83,9 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
     gap: 12,
+  },
+  error: {
+    color: 'red',
+    marginVertical: 10,
   },
 });

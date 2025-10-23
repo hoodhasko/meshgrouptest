@@ -16,7 +16,12 @@ export interface TeamListResponse {
 }
 
 export const TeamService = {
-  async fetchTeamsList() {
-    return await apiClient.get<TeamListResponse>('teams');
+  async fetchTeamsList(limit: number, offset: number) {
+    return await apiClient.get<TeamListResponse>('teams', {
+      params: {
+        limit,
+        offset,
+      },
+    });
   },
 };
