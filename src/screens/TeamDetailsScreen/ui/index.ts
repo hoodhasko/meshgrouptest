@@ -1,2 +1,3 @@
 export * from './DetailItem';
-export * from './WorkTypesList';
+export * from './SquadList';
+export * from './TeamDetailsHeader';

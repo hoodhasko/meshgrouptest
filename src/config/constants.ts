@@ -5,3 +5,7 @@ export const SCREEN_NAMES = {
   TeamsListScreen: 'TeamsListScreen',
   TeamDetailsScreen: 'TeamDetailsScreen',
 } as const;
+
+export const MATCHES_STATUSES = {
+  SCHEDULED: 'SCHEDULED',
+} as const;

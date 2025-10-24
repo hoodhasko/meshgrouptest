@@ -1,3 +1,4 @@
+import { MATCHES_STATUSES } from '../../config';
 import { apiClient } from '../../shared/api';
 
 export interface TeamListItemResponse {
@@ -13,6 +14,14 @@ export interface TeamListResponse {
     offset: number;
   };
   teams: TeamListItemResponse[];
+}
+
+export interface TeamSquadItem {
+  id: number;
+  name: string;
+  position: string;
+  dateOfBirth: string;
+  nationality: string;
 }
 
 export interface TeamDataResponse {
@@ -32,6 +41,22 @@ export interface TeamDataResponse {
   founded: number;
   clubColors: string;
   venue: string;
+  squad: TeamSquadItem[];
+}
+
+export interface TeamMatchesItemResponse {
+  competition: {
+    id: number;
+    name: string;
+  };
+  id: number;
+  utcDate: string;
+  homeTeam: TeamListItemResponse;
+  awayTeam: TeamListItemResponse;
+}
+
+export interface TeamMatchesListResponse {
+  matches: TeamMatchesItemResponse[];
 }
 
 export const TeamService = {
@@ -45,5 +70,18 @@ export const TeamService = {
   },
   async fetchTeam(teamId: number) {
     return await apiClient.get<TeamDataResponse>(`teams/${teamId}`);
+  },
+  async fetchTeamMatches(
+    teamId: number,
+    status?: keyof typeof MATCHES_STATUSES,
+  ) {
+    return await apiClient.get<TeamMatchesListResponse>(
+      `teams/${teamId}/matches`,
+      {
+        params: {
+          status,
+        },
+      },
+    );
   },
 };
